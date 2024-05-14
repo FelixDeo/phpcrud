@@ -1,11 +1,17 @@
 <?php
  
-require_once('database.php');
+ require_once('database.php');
 $con = new database();
+session_start();
  
 $id=$_POST['id'];
  
+if(empty($_SESSION['user'])){
+  header("location:login.php");
+ }
+ 
 if(empty($id)) {
+    $_SESSION['user'] = $result['user'];
     header('location:index.php');
 }else{
     $rows = $con->viewdata($id);
@@ -51,7 +57,7 @@ if($password == $confirm){
  
   <style>
     body{
-      background-color: lightskyblue;
+      background-color: lightpink;
     }
     .custom-container{
         width: 800px;
@@ -64,12 +70,14 @@ if($password == $confirm){
 </head>
 <body>
  
+<?php include('includes/navbar.php');?>
+ 
 <div class="container custom-container rounded-3 shadow my-5 p-3 px-5">
   <h3 class="text-center mt-4"> Registration Form</h3>
   <form method ="post">
     <!-- Personal Information -->
     <div class="card mt-4">
-      <div class="card-header bg-danger text-white">Personal Information</div>
+      <div class="card-header bg-dark text-white">Personal Information</div>
       <div class="card-body">
         <div class="form-row">
           <div class="form-group col-md-6 col-sm-12">
@@ -92,6 +100,8 @@ if($password == $confirm){
               <option selected>Select Sex</option>
               <option value="Male" <?php if ($rows['sex'] == 'Male') echo 'selected';?>>Male</option>
               <option value="Female" <?php if ($rows['sex'] == 'Female') echo 'selected';?>>Female</option>
+              <option value="Bading" <?php if ($rows['sex'] == 'Bading') echo 'selected';?>>Bading</option>
+              <option value="Yobmot" <?php if ($rows['sex'] == 'Yobmot') echo 'selected';?>>Yobmot</option>
             </select>
           </div>
         </div>
@@ -112,7 +122,7 @@ if($password == $confirm){
    
     <!-- Address Information -->
     <div class="card mt-4">
-      <div class="card-header bg-danger text-white">Address Information</div>
+      <div class="card-header bg-dark text-white">Address Information</div>
       <div class="card-body">
         <div class="form-group">
           <label for="street">Street:</label>

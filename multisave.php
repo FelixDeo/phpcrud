@@ -1,9 +1,13 @@
 <?php
 require_once('database.php');
-
+ 
 $con = new database();
-$error = ""; // Initialize error variable
-
+// session_start();
+ 
+// if(empty($_SESSION['user'])){
+//   header("location:login.php");
+//  }
+ 
 if (isset($_POST['multisave'])) {
     // Retrieve form data
     $firstname = $_POST['firstname'];
