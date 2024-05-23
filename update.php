@@ -1,49 +1,52 @@
 <?php
- 
- require_once('database.php');
+require_once('classes/database.php');
 $con = new database();
+
 session_start();
- 
-$id=$_POST['id'];
- 
-if(empty($_SESSION['user'])){
-  header("location:login.php");
- }
- 
-if(empty($id)) {
-    $_SESSION['user'] = $result['user'];
+
+if (empty($_SESSION['user'])) {
+  header('location:login.php');
+  }
+  
+
+$id = $_POST['id'];
+if(empty($id)){
     header('location:index.php');
-}else{
-    $rows = $con->viewdata($id);
-}if (isset($_POST['update'])) {
-  $firstname = $_POST['firstname'];
-  $lastname = $_POST['lastname'];
+} else {
+  $row=$con->viewdata($id);
+}
+
+if(isset($_POST['update'])){
+  $id = $_POST['id'];
+  $firstname= $_POST['first'];
+  $lastname = $_POST['last'];
   $birthday = $_POST['birthday'];
   $sex = $_POST['sex'];
-  $username = $_POST['user'];
-  $password = $_POST['pass'];
-  $confirm = $_POST['confirm'];
+  $username = $_POST['username'];
+  $password = $_POST['password'];
+  $confirm = $_POST['c_pass'];
+
   $street = $_POST['street'];
   $barangay = $_POST['barangay'];
   $city = $_POST['city'];
   $province = $_POST['province'];
-  $user_id= $_POST['id'];
- 
-if($password == $confirm){
- if($con->updateUser($user_id, $firstname, $lastname, $birthday, $sex, $username, $password)){
-  if($con->updateuserAddress($user_id, $street, $barangay, $city, $province)){
-    header('location:index.php');
-    exit();
-  }else{
-    $error = "Ërror occured while updating user address. Please Try Again";
-  }
-}else{
-  $error = "Error occured while updating user information. Please Try Again";
+
+  if($password==$confirm){
+    if($con->updateUser($id,$firstname, $lastname, $birthday, $sex, $username, $password)){
+      if($con->updateUserAddress($id,$street,$barangay,$city,$province)){
+        header('location:index.php');
+        exit();
+      } else {
+        $error = "Error while updating user address. Please try again.";
+      }
+    } else{
+      $error = "Error occured while updating user information. Please try again.";
     }
   }
 }
+
 ?>
- 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -54,11 +57,8 @@ if($password == $confirm){
   <!-- Bootstrap CSS -->
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
- 
+
   <style>
-    body{
-      background-color: lightpink;
-    }
     .custom-container{
         width: 800px;
     }
@@ -66,103 +66,107 @@ if($password == $confirm){
     font-family: 'Roboto', sans-serif;
     }
   </style>
- 
+
 </head>
 <body>
- 
+
 <?php include('includes/navbar.php');?>
- 
+
 <div class="container custom-container rounded-3 shadow my-5 p-3 px-5">
-  <h3 class="text-center mt-4"> Registration Form</h3>
-  <form method ="post">
+  <h3 class="text-center mt-4"> User Profile</h3>
+  <form method="post">
     <!-- Personal Information -->
     <div class="card mt-4">
-      <div class="card-header bg-dark text-white">Personal Information</div>
+      <div class="card-header bg-info text-white">Personal Information</div>
       <div class="card-body">
         <div class="form-row">
           <div class="form-group col-md-6 col-sm-12">
             <label for="firstName">First Name:</label>
-            <input type="text" class="form-control" id="firstName" value="<?php  echo $rows['firstname'];?>" name="firstname" placeholder="Enter first name" required>
+            <input type="text" class="form-control" name="first" value="<?php echo ucwords($row['first_name']); ?>" placeholder="Enter first name" required>
           </div>
           <div class="form-group col-md-6 col-sm-12">
             <label for="lastName">Last Name:</label>
-            <input type="text" class="form-control" id="lastName" value="<?php  echo $rows['lastname'];?>" name="lastname" placeholder="Enter last name" required>
+            <input type="text" class="form-control" name="last" value="<?php echo ucwords($row['last_name']); ?>" placeholder="Enter last name" required>
           </div>
         </div>
         <div class="form-row">
           <div class="form-group col-md-6">
             <label for="birthday">Birthday:</label>
-            <input type="date" class="form-control" name="birthday" id="birthday" value="<?php  echo $rows['birthday'];?>" required>
+            <input type="date" class="form-control" value="<?php echo $row['birthdate']; ?>" name="birthday" required>
           </div>
           <div class="form-group col-md-6">
             <label for="sex">Sex:</label>
-            <select class="form-control" name="sex" id="sex"required>
+            <select class="form-control" value="<?php echo $row['sex']; ?>" name="sex" required>  
               <option selected>Select Sex</option>
-              <option value="Male" <?php if ($rows['sex'] == 'Male') echo 'selected';?>>Male</option>
-              <option value="Female" <?php if ($rows['sex'] == 'Female') echo 'selected';?>>Female</option>
-              <option value="Bading" <?php if ($rows['sex'] == 'Bading') echo 'selected';?>>Bading</option>
-              <option value="Yobmot" <?php if ($rows['sex'] == 'Yobmot') echo 'selected';?>>Yobmot</option>
+              <option value="Male" <?php if($row['sex'] == 'Male') echo 'selected'?>>Male</option>
+              <option value="Female" <?php if($row['sex'] == 'Female') echo 'selected'?>>Female</option>
             </select>
           </div>
         </div>
         <div class="form-group">
           <label for="username">Username:</label>
-          <input type="text" class="form-control" id="username" name="user" value="<?php  echo $rows['user'];?>" placeholder="Enter username" required>
+          <input type="text" class="form-control" name="username" value="<?php echo $row['user']; ?>" placeholder="Enter username" required>
         </div>
         <div class="form-group">
           <label for="password">Password:</label>
-          <input type="password" class="form-control" id="password" name="pass" value="<?php  echo $rows['pass'];?>" placeholder="Enter password" required>
+          <input type="password" class="form-control" name="password" value="<?php echo $row['pass']; ?>" placeholder="Enter password" required>
         </div>
         <div class="form-group">
-      <label for="confirm">Confirm Password:</label>
-      <input type="confirm" class="form-control" id="confirm" placeholder="Re-Enter password" name="confirm" value="<?php  echo $rows['pass'];?>">
-    </div>
+          <label for="password">Confirm Password:</label>
+          <input type="password" class="form-control" name="c_pass" placeholder="Re-Enter password" required>
+        </div>
       </div>
     </div>
    
     <!-- Address Information -->
     <div class="card mt-4">
-      <div class="card-header bg-dark text-white">Address Information</div>
+      <div class="card-header bg-success text-white">Address Information</div>
       <div class="card-body">
         <div class="form-group">
           <label for="street">Street:</label>
-          <input type="text" class="form-control" id="street" name="street" value="<?php  echo $rows['user_street'];?>" placeholder="Enter street" required>
+          <input type="text" class="form-control" name="street" value="<?php echo ucwords($row['user_street']); ?>" placeholder="Enter street" required>
         </div>
         <div class="form-row">
           <div class="form-group col-md-6">
             <label for="barangay">Barangay:</label>
-            <input type="text" class="form-control" id="barangay" name="barangay" value="<?php echo $rows['user_barangay'];?>" placeholder="Enter barangay" required>
+            <input type="text" class="form-control" name="barangay" value="<?php echo ucwords($row['user_barangay']); ?>" placeholder="Enter barangay" required>
           </div>
           <div class="form-group col-md-6">
             <label for="city">City:</label>
-            <input type="text" class="form-control" id="city" name="city" value="<?php echo $rows['user_city'];?>" placeholder="Enter city" required>
+            <input type="text" class="form-control" name="city" value="<?php echo ucwords($row['user_city']); ?>" placeholder="Enter city" required>
           </div>
         </div>
         <div class="form-group">
           <label for="province">Province:</label>
-          <input type="text" class="form-control" id="province" name="province" value="<?php echo $rows['user_province'];?>" placeholder="Enter province" required>
+          <input type="text" class="form-control" name="province" value="<?php echo ucwords($row['user_province']); ?>" placeholder="Enter province" required>
         </div>
       </div>
     </div>
-   
+    
     <!-- Submit Button -->
-   
+    <?php if (!empty($error)) : ?>
+                            <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+                                <?php echo $error; ?>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                            <?php endif; ?>
+                   
     <div class="container">
     <div class="row justify-content-center gx-0">
-        <div class="col-lg-3 col-md-4">
-           <input type="hidden" name="id" value ="<?php echo $rows['user_id'];?>">
-            <input type="submit" name="update" class="btn btn-outline-dark btn-block mt-4" value="Update">
+        <div class="col-lg-3 col-md-4"> 
+        <input type="hidden" name="id" value="<?php echo $row['user_id']; ?>"> 
+            <input type="submit" name="update" class="btn btn-outline-primary btn-block mt-4" value="Update Profile">
         </div>
-        <div class="col-lg-3 col-md-4">
-            <a class="btn btn-outline-light btn-block mt-4" href="login.php">Go Back</a>
+        <div class="col-lg-3 col-md-4"> 
+            <a class="btn btn-outline-danger btn-block mt-4" href="index.php">Go Back</a>
         </div>
     </div>
 </div>
- 
- 
+
+
   </form>
 </div>
- 
+
 <!-- Bootstrap JS and dependencies -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>

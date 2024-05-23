@@ -1,108 +1,83 @@
 <?php
-require_once('database.php');
-
+require_once('classes/database.php');
 $con = new database();
- 
-if(isset($_POST['signup'])) {
-  $username = $_POST['user_name'];
-  $password = $_POST['user_pass'];
-  $confirm = $_POST['confirm_pass'];
-  $first_name = $_POST['first_name'];
-  $last_name = $_POST['last_name'];
+
+if(isset($_POST['Signup'])){
+  $username = $_POST['user'];
+  $password = $_POST['pass'];
+  $confirm = $_POST['pass2'];
+  $firstname= $_POST['first'];
+  $lastname = $_POST['last'];
   $birthday = $_POST['birthday'];
   $sex = $_POST['sex'];
 
-  if($password == $confirm) {
-    if($con -> signup($username, $password, $first_name, $last_name, $birthday, $sex)){
-        header('location: login.php');
-    } else {
-        $error_message = "Username already exists. Please choose a different username";
-}
 
+  if($password == $confirm){
+    if($con->signup($username,$password,$firstname,$lastname,$birthday,$sex)){
+        header('location:login.php');
 } else {
-        $error_message = "Password did not match";
+    echo 'Username already exist';
+} 
+} else {
+    echo 'Password do not match';
 }
 }
- 
-?>
- 
 
- <!DOCTYPE html>
+?>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SignUp Page</title>
+  <title>Sign Up Page</title>
   <link rel="stylesheet" href="./bootstrap-5.3.3-dist/css/bootstrap.css">
-  <link rel="stylesheet" href="style.css">
   <!-- Bootstrap CSS -->
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    .login-container {
-      max-width: 400px;
-      margin: 0 auto;
-      margin-top: 100px;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-
-<div class="container-fluid login-container rounded shadow">
-  <h2 class="text-center mb-4">Register Now</h2>
+<div class="container-fluid login-container rounded shadow" >
+  <h2 class="text-center mb-4">Sign Up</h2>
   <form method="post">
-
-    <!-- FIST NAME -->
   <div class="form-group">
-      <label for="first_name">First Name:</label>
-      <input type="text" class="form-control" name="first_name" placeholder="Enter First Name">
+      <label for="username">First Name:</label>
+      <input type="text" class="form-control" name="first" placeholder="Enter First Name" >
     </div>
-
-    <!-- LAST NAME -->
     <div class="form-group">
-      <label for="last_name">Last Name:</label>
-      <input type="text" class="form-control" name="last_name" placeholder="Enter Last Name">
+      <label for="username">Last Name:</label>
+      <input type="text" class="form-control" name="last" placeholder="Enter Last Name" >
     </div>
-
-    <!-- BIRTHDAY -->
-    <div class="form-group">
-      <label for="birthday">Birthday:</label>
+    <div class="mb-3">
+      <label for="birthday" class="form-label">Birthday:</label>
       <input type="date" class="form-control" name="birthday">
     </div>
-    <div class="form-group">
-      <label for="sex">Sex:</label>
-      <select class="form-control" name="sex">
+    <div class="mb-3">
+      <label for="sex" class="form-label">Sex:</label>
+      <select class="form-select" name="sex">
+        <option selected disabled>Select Sex</option>
         <option value="male">Male</option>
         <option value="female">Female</option>
       </select>
     </div>
-
-    <!-- USERNAME -->
     <div class="form-group">
       <label for="username">Username:</label>
-      <input type="text" class="form-control"  name = 'user_name' placeholder="Enter Username">
+      <input type="text" class="form-control" name="user" placeholder="Enter Username" >
     </div>
-
-    <!-- PASSWORD -->
     <div class="form-group">
       <label for="password">Password:</label>
-      <input type="password" class="form-control"  name = 'user_pass' placeholder="Enter Password">
+      <input type="password" class="form-control" name="pass" placeholder="Enter password">
     </div>
-
-    <!-- CONFIRM PASSWORD -->
     <div class="form-group">
-      <label for="password">Confirm Password:</label>
-      <input type="password" class="form-control"  name = 'confirm_pass' placeholder="Confirm Password">
+      <label for="username">Confirm Password:</label>
+      <input type="password" class="form-control" name="pass2" placeholder="Re-enter password" >
     </div>
     <div class="container">
       <div class="row gx-1">
-        <div class="col"> 
-
-             <input type="submit" id="signup" class = "btn btn-danger btn-block" name = "signup" value = "Sign Up">
-
-        </div>
+        <div class="col"><input type="submit" class="btn btn-danger btn-block" name="Signup"></input></div>
       </div>
     </div>
+
   </form>
 </div>
 
